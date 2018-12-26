@@ -21,3 +21,17 @@ CRETATE TABLE aluno (
 	dt_nascimento date,
 	CONSTRAINT cpf_unique UNIQUE(CPF)
 );
+--
+-- Restrição de unicidade com mais de uma coluna:
+CREATE TABLE aluno (
+	codigo int,
+	nome varchar(100),
+	CPF char(11),
+	RG char(10),
+	orgaoEmissor char(15),
+	email varchar(50),
+	telefone varchar(11),
+	dt_nascimento date,
+	CONSTRAINT cpf3_unique UNIQUE(CPF),
+	constraint rg_unique unique(rg, orgaoEmissor)
+);
