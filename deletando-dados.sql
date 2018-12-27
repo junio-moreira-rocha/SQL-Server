@@ -1,0 +1,2 @@
+-- Deletando dados
+DELETE FROM FUN_FUNCIONARIOS WHERE FUN_ID = 2;
