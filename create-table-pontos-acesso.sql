@@ -11,8 +11,34 @@ ALTER TABLE PAC_PONTO_ACESSO
 ADD CONSTRAINT FK_PAC_PONTOS_ACESSO__FUN_FUNCIONARIOS__FUN_ID
 FOREIGN KEY(FUN_ID) REFERENCES FUN_FUNCIONARIOS(FUN_ID);
 --
-
 -- Populando a tabela:
 INSERT INTO PAC_PONTO_ACESSO
     (PAC_DATA_INICIAL,FUN_ID)
 VALUES('30/12/2018 23:08:00', 1);
+--
+-- Função não Deterministica [DATEPART()]
+-- Adiciona a constraint de data inicial e data final para não terem um intervalo maior que o de um dia.
+ALTER TABLE PAC_PONTO_ACESSO add CONSTRAINT ck_pac_pontos_acesso__data_inicial_data_final
+CHECK
+(
+    PAC_DATA_INICIAL < PAC_DATA_FINAL and 
+    DATEPART(DAY, PAC_DATA_INICIAL) = DATEPART(DAY, PAC_DATA_FINAL) AND
+    DATEPART(MONTH, PAC_DATA_INICIAL) = DATEPART(MONTH, PAC_DATA_FINAL) AND
+    DATEPART(YEAR, PAC_DATA_INICIAL) = DATEPART(YEAR, PAC_DATA_FINAL)
+);
+--
+-- Funções Deterministica [DAY(), MONTH(), YEAR()]
+ALTER TABLE PAC_PONTO_ACESSO add CONSTRAINT ck_pac_pontos_acesso__data_inicial_data_final
+CHECK
+(
+    PAC_DATA_INICIAL < PAC_DATA_FINAL AND 
+    DAY(PAC_DATA_INICIAL) = DAY(PAC_DATA_FINAL) AND
+    MONTH(PAC_DATA_INICIAL) = MONTH(PAC_DATA_FINAL) AND
+    YEAR(PAC_DATA_INICIAL) = YEAR(PAC_DATA_FINAL)
+);
+--
+-- Drop Constraint:
+ALTER TABLE PAC_PONTO_ACESSO DROP CONSTRAINT ck_pac_pontos_acesso__data_inicial_data_final;
+--
+-- Verifica se a Constraint está funcionando:
+UPDATE PAC_PONTO_ACESSO SET PAC_DATA_FINAL = '30/12/2018 23:07:00' WHERE FUN_ID = 1;
